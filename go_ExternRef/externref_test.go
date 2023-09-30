@@ -1,18 +1,19 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/second-state/WasmEdge-go/wasmedge"
 )
 
-func TestExt(t *testing.T) {
-	fmt.Println("Go: Args:", os.Args)
-	// Expected Args[0]: program name (./externref)
-	// Expected Args[1]: wasm file (funcs.wasm)
+var (
+	//go:embed funcs.wasm
+	funcsWasm []byte
+)
 
+func TestExt(t *testing.T) {
 	// Set not to print debug info
 	wasmedge.SetLogErrorLevel()
 
@@ -49,7 +50,7 @@ func TestExt(t *testing.T) {
 	vm.RegisterModule(obj)
 
 	// Instantiate wasm
-	vm.LoadWasmFile(os.Args[1])
+	vm.LoadWasmBuffer(funcsWasm)
 	vm.Validate()
 	vm.Instantiate()
 
